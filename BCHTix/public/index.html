@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>BCHTix</title>
+      
+      <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="shortcut icon" href="./favicon.ico">
+    <link rel="stylesheet" href="../plugins/Bootstrap 4.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../plugins/css/typeahead.css" />
+    <link rel="stylesheet" href="../plugins/Iconic/font/css/open-iconic-bootstrap.less" />
+
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+	<script src="../plugins/js/jquery-3.1.1.js"></script>
+    <script src="../plugins/Bootstrap 4.0/js/bootstrap.bundle.min.js"></script>
+	<script src="../plugins/js/spin.min.js"></script>
+    <script src="../plugins/js/jquery.tmpl.min.js"></script>
+    <script src="../src/BCHTIX.js"></script>
+    <script src="../src/App.js"></script>
+    <script src="../src/index.js"></script>
+
+    <script>
+        $(function () {
+            var pageObj = new BCHTIX.Index();
+        })
+    </script>
+	
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+	
+	<div class="jumbotron">
+	  <h1 class="display-4">Welcome to BCHTix</h1>
+	  <p class="lead">Where you're not a bitch for buying tix</p>
+	  <hr class="my-4">
+	  <p>BCHTix is interested in scalable ticket sales while maintaining quality code controlled by tabs</p>
+	  <p class="lead">
+		<a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+	  </p>
+	</div>
+	
+
+    <div class="modal fade" id="seatSelection" tabindex="-1" role="dialog" aria-labelledby="seatSelectionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Suck it Dylan</h5>
+                </div>
+                <div class="modal-body text-center">
+                     <img src="../src/Kevin_BCH_Code.png"/>
+                </div>
+                <div class="modal-footer">
+                    <button id="bt-modal-cancel" type="button" class="btn btn-seconday" data-dismiss="modal"> OK</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+  </body>
+</html>  
+<script id="btix-seating-chart" type="text/x-jquery-tmpl">
+    <div class="container-fluid">
+        <div class="row">
+            {{each Sections}}
+            <div class="col">
+                <h2>Section ${SectionID}</h2>
+                {{tmpl($value) "#btix-section" }}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+<script id="btix-section" type="text/x-jquery-tmpl">
+    <div class="container">
+	    <table>
+		    {{each Rows}}
+			    <tr>
+				    {{tmpl($value) "#btix-seating-chart-seat" }}
+			    </tr>
+		    {{/each}}
+	    </table>
+    </div>
+</script>
+  
+<script id="btix-seating-chart-seat" type="text/x-jquery-tmpl">
+    {{each Seats}}
+        {{if Occupied}}
+            <td id="${ID}"><button class="seat-selection btn btn-danger" disabled title="Occupied">Seat ${ID}</button></td>
+        {{else}}
+            <td id="${ID}"><button class="seat-selection btn btn-primary">Seat ${ID}</button></td>
+        {{/if}}
+        
+    {{/each}}
+</script>
+  
+
