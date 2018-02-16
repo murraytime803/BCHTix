@@ -7,12 +7,13 @@
 //ReactDOM.render(<App />, document.getElementById('root'));
 //registerServiceWorker();
 
-window.BCHTIX = window.BCHTIX || {};
-window.BCHTIX.Index = window.BCHTIX.Index || {};
+BCHTIX = window.BCHTIX || {};
+BCHTIX.Index = window.BCHTIX.Index || {};
 
 BCHTIX.Index = function StaffPlan$BCHTix$Index()
 {
     this._seatsTemplate = $("#btix-seating-chart").template();
+    this._spinner = new Spinner();
     this._Initialize();
 }
 
@@ -22,172 +23,73 @@ BCHTIX.Index.prototype =
 	_spinner: {},
 	_seatsTemplate: {},
 	_seatsData: {},
+	_spinner: {},
 	
     _Initialize: function BCHTix$Initialize()
     {
-        window.BCHTix.AjaxWrapper("https://bchflip.com:5000/seating_chart", null, $.proxy(this._LoadResponse, this))
+        this._AppendSpinner();
+        BCHTix.AjaxWrapper("https://bchflip.com:5000/seating_chart",
+            null,
+            $.proxy(this._LoadResponse, this));
     },
+
+    _AppendSpinner: function BCHTix$Append$Spinner(appendTo)
+    {
+        appendTo = appendTo || document.body;
+        this._spinner.spin();
+        $(appendTo).append(this._spinner.el);
+    },
+
+    _StopSpinner: function BCHTix$Stop$Spinner()
+    {
+        if (this._spinner.el)
+        {
+            this._spinner.stop();
+        }
+    },
+
     _LoadResponse: function LoadResponse(response)
     {
-        this._seatsData = response.seating_chart
-        console.log(this._seatsData)
-        console.log(this._testSeatData())
+        this._seatsData = response.seating_chart;
         $.tmpl(this._seatsTemplate, { Sections: this._seatsData }).appendTo("body");
         this._BindFunctions()
+        this._StopSpinner();
     },
-
-	_testSeatData: function BCHTIX$Test$Seat$Data()
-	{
-		
-	    var data = [{
-	        SectionID: 1,
-	        Rows: [
-            {
-                RowID: 1,
-                Seats:
-                    [
-                        {
-                            ID: 1,
-                            Occupied: true
-                        },
-                        {
-                            ID: 2,
-                            Occupied: false
-                        },
-                        {
-                            ID: 3,
-                            Occupied: false
-                        }
-                    ]
-            },
-            {
-                RowID: 2,
-                Seats:
-                    [
-                        {
-                            ID: 4,
-                            Occupied: false
-                        },
-                        {
-                            ID: 5,
-                            Occupied: false
-                        },
-                        {
-                            ID: 6,
-                            Occupied: true
-                        }
-                    ]
-
-            },
-            {
-                RowID: 3,
-                Seats:
-                    [
-                        {
-                            ID: 7,
-                            Occupied: false
-                        },
-                        {
-                            ID: 8,
-                            Occupied: false
-                        },
-                        {
-                            ID: 9,
-                            Occupied: true
-                        }
-                    ]
-            }
-	        ]
-	    },
-        {
-            SectionID: 2,
-            Rows:
-            [{
-                RowID: 1,
-                Seats:
-                    [
-                        {
-                            ID: 10,
-                            Occupied: false
-                        },
-                        {
-                            ID: 11,
-                            Occupied: true
-                        },
-                        {
-                            ID: 12,
-                            Occupied: false
-                        }
-                    ]
-            },
-            {
-                RowID: 2,
-                Seats:
-                    [
-                        {
-                            ID: 13,
-                            Occupied: true
-                        },
-                        {
-                            ID: 14,
-                            Occupied: false
-                        },
-                        {
-                            ID: 15,
-                            Occupied: true
-                        }
-                    ]
-            },
-            {
-                RowID: 3,
-                Seats:
-                    [
-                        {
-                            ID: 16,
-                            Occupied: true
-                        },
-                        {
-                            ID: 17,
-                            Occupied: false
-                        },
-                        {
-                            ID: 18,
-                            Occupied: false
-                        }
-                    ]
-            },
-            {
-                RowID: 4,
-                Seats:
-                    [
-                        {
-                            ID: 19,
-                            Occupied: true
-                        },
-                        {
-                            ID: 20,
-                            Occupied: true
-                        },
-                        {
-                            ID: 21,
-                            Occupied: false
-                        }
-                    ]
-            }]
-
-        }]
-
-		return data;
-		
-	},
 	
 	_BindFunctions: function BCHTix$Bind$Functions()
 	{
 	    $(".seat-selection").click($.proxy(this._SeatSelectButtonClick, this));
 	},
+
 	_SeatSelectButtonClick: function BCHTix$Seat$Select$Button$Click(target)
 	{
-        
+	    var div = $(target.currentTarget).closest("div");
+	    this._AppendSpinner(div);
+	    BCHTix.AjaxWrapper("https://bchflip.com:5000/address",
+            null,
+            $.proxy(this._BCHAddressReceived, this),
+            $.proxy(this._ErrorHandler, this),
+            {type: "POST"});
+	},
+
+	_BCHAddressReceived: function BCHTix$BCH$Address$Recevied(result)
+	{
+	    this._StopSpinner();
+
+	    if (!result.created)
+	    {
+	        this._ErrorHandler();
+	        return;
+	    }
+
+	    $("#modalAddress").empty();
+	    $("#modalAddress").append('<img src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=%20bitcoincash:' + result.address +
+            '?amount=" /><p>' + result.address + '</p>');
 	    $("#seatSelection").modal("show");
-	}
+	},
+
+    _ErrorHandler: function BCHTix$Error$Handler()
+    {
+        alert("O no, something went wrong");
+    }
 }
