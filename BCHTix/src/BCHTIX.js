@@ -1,10 +1,6 @@
 window.BCHTIX = window.BCHTIX || {}
 
-BCHTIX = 
-{
-
-}
-
+BCHTix = {}
 BCHTix.AjaxWrapper = function BCHTix$StaffPlan$Ajax$Wrapper(url, data, successHandler, failureHandler, overrides)
 {
     overrides = overrides || {};
