@@ -25,8 +25,15 @@ BCHTIX.Index.prototype =
 	
     _Initialize: function BCHTix$Initialize()
     {
-        this._seatsData = this._testSeatData();
-        $.proxy(this._LoadSeatInfo(), this);
+        window.BCHTix.AjaxWrapper("https://bchflip.com:5000/seating_chart", null, $.proxy(this._LoadResponse, this))
+    },
+    _LoadResponse: function LoadResponse(response)
+    {
+        this._seatsData = response.seating_chart
+        console.log(this._seatsData)
+        console.log(this._testSeatData())
+        $.tmpl(this._seatsTemplate, { Sections: this._seatsData }).appendTo("body");
+        this._BindFunctions()
     },
 
 	_testSeatData: function BCHTIX$Test$Seat$Data()
@@ -178,13 +185,6 @@ BCHTIX.Index.prototype =
 	{
 	    $(".seat-selection").click($.proxy(this._SeatSelectButtonClick, this));
 	},
-
-	_LoadSeatInfo: function LoadSeatInfo()
-	{
-	    $.tmpl(this._seatsTemplate, { Sections: this._seatsData }).appendTo("body");
-	    this._BindFunctions();
-	},
-
 	_SeatSelectButtonClick: function BCHTix$Seat$Select$Button$Click(target)
 	{
 	    $("#seatSelection").modal("show");
