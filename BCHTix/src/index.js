@@ -187,6 +187,7 @@ BCHTIX.Index.prototype =
 
 	_SeatSelectButtonClick: function BCHTix$Seat$Select$Button$Click(target)
 	{
+        
 	    $("#seatSelection").modal("show");
 	}
 }
